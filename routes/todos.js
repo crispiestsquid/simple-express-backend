@@ -1,4 +1,5 @@
 const express = require('express');
+const { response } = require('../app');
 const router = express.Router();
 const Todo = require('../models/todo-schema');
 
@@ -8,15 +9,9 @@ router.route('/')
 	.get(function (req, res, next) {
 		Todo.find()
 			.then(todos => {
-				if (todos) {
-					res.setHeader('Content-Type', 'application/json');
-					res.statusCode = 200;
-					res.json(todos);
-				} else {
-					res.setHeader('Content-Type', 'application/json');
-					res.statusCode = 500;
-					res.json({ error: 'Unknown error fetching todos... try again.' });
-				}
+				res.setHeader('Content-Type', 'application/json');
+				res.statusCode = 200;
+				res.json(todos);
 			})
 			.catch(err => {
 				res.setHeader('Content-Type', 'application/json');
@@ -28,15 +23,9 @@ router.route('/')
 	.post(function (req, res, next) {
 		Todo.create(req.body)
 			.then(todo => {
-				if (todo) {
-					res.setHeader('Content-Type', 'application/json');
-					res.statusCode = 200;
-					res.json(todo);
-				} else {
-					res.setHeader('Content-Type', 'application/json');
-					res.statusCode = 500;
-					res.json({ error: 'Unknown error creating todo... try again.' });
-				}
+				res.setHeader('Content-Type', 'application/json');
+				res.statusCode = 200;
+				res.json(todo);
 			})
 			.catch(err => {
 				res.setHeader('Content-Type', 'application/json');
@@ -49,15 +38,9 @@ router.route('/:id')
 	.get(function (req, res, next) {
 		Todo.findById(req.params.id)
 			.then(todo => {
-				if (todo) {
-					res.setHeader('Content-Type', 'application/json');
-					res.statusCode = 200;
-					res.json(todo);
-				} else {
-					res.setHeader('Content-Type', 'application/json');
-					res.statusCode = 500;
-					res.json({ error: 'Unknown error fetching todo... try again.' });
-				}
+				res.setHeader('Content-Type', 'application/json');
+				res.statusCode = 200;
+				res.json(todo);
 			})
 			.catch(err => {
 				res.setHeader('Content-Type', 'application/json');
@@ -66,17 +49,13 @@ router.route('/:id')
 			});
 	})
 	.put(function (req, res, next) {
-		Todo.findByIdAndUpdate(req.params.id, req.body)
+		Todo.findByIdAndUpdate(req.params.id, {
+			$set: req.body
+		}, { new: true })
 			.then(todo => {
-				if (todo) {
-					res.setHeader('Content-Type', 'application/json');
-					res.statusCode = 200;
-					res.json(todo);
-				} else {
-					res.setHeader('Content-Type', 'application/json');
-					res.statusCode = 500;
-					res.json({ error: 'Unknown error updating todo... try again.' });
-				}
+				res.setHeader('Content-Type', 'application/json');
+				res.statusCode = 200;
+				res.json(todo);
 			})
 			.catch(err => {
 				res.setHeader('Content-Type', 'application/json');
@@ -85,11 +64,11 @@ router.route('/:id')
 			});
 	})
 	.delete(function (req, res, next) {
-		Todo.findByIdAndRemove(req.params.id)
-			.then(() => {
+		Todo.findByIdAndDelete(req.params.id)
+			.then(response => {
 				res.setHeader('Content-Type', 'application/json');
 				res.statusCode = 200;
-				res.json({ success: true });
+				res.json(response);
 			})
 			.catch(err => {
 				res.setHeader('Content-Type', 'application/json');
