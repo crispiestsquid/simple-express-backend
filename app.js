@@ -11,12 +11,7 @@ var mongoose = require('mongoose');
 
 var mongoUrl = process.env.MONGO_URL;
 
-var connect = mongoose.connect(mongoUrl, {
-  useCreateIndex: true,
-  useFindAndModify: false,
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-});
+var connect = mongoose.connect(mongoUrl);
 
 connect.then(() => console.log('Connected correctly to the database!'),
   err => console.error(err, 'Error connecting to mongo...'));
